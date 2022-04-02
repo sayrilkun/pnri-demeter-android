@@ -26,7 +26,7 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivymd.uix.label import MDLabel
 from kivy.uix.boxlayout import BoxLayout
 
-Window.size=(400,700)
+# Window.size=(400,700)
 
 class KivyCamera(Image):
     pass
@@ -42,6 +42,7 @@ class GeneratorScreen(Screen):
 
 class HelpScreen(Screen):
     pass
+
 class ScannerScreen(Screen):
     def on_leave(self, *args):
         cam = self.ids.cam
@@ -97,7 +98,7 @@ class DemoApp(MDApp):
     def show_cam(self):
         cam = self.help.get_screen('scanner').ids.cam
         self.clock_event = Clock.schedule_interval(self.update, 1.0 /30)
-        cam.capture = cv2.VideoCapture(0,cv2.CAP_DSHOW)
+        cam.capture = cv2.VideoCapture(32,cv2.CAP_DSHOW)
 
 
 
