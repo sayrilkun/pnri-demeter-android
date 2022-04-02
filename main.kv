@@ -10,7 +10,7 @@ ScreenManager:
 <MenuScreen>:
     name: 'menu'
     MDScreen:
-        md_bg_color: app.purple
+        md_bg_color: app.dark2
         on_enter:
             print('sfadseryeryetf')
     MDBoxLayout:
@@ -97,7 +97,7 @@ ScreenManager:
                     root.manager.transition.direction = "left"
 
 <ElementCard@MDCard>:
-    md_bg_color:69/255,55/255,86/255,1
+    md_bg_color:app.dark1
     padding:dp(15)
     spacing:dp(15)
     radius:dp(25)
@@ -145,10 +145,7 @@ ScreenManager:
     MDBoxLayout:
         # size_hint_y:.25
         padding:dp(15)
-        KivyCamera:
-            index: 0
-            play: True
-            resolution: (640,480)
+        AndroidCamera:
             id: cam
             size_hint: 1,1
             pos_hint: {"x":0,"top":1} 

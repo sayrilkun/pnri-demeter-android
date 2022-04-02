@@ -28,7 +28,7 @@ from kivy.uix.boxlayout import BoxLayout
 
 # Window.size=(400,700)
 
-class KivyCamera(Image):
+class AndroidCamera(Image):
     pass
 
 class MenuScreen(Screen):
@@ -61,6 +61,15 @@ class QRScreen(Screen):
 
 class DemoApp(MDApp):
     purple = 56/255,40/255,81/255,1
+    dark_green = 43/255, 172/255, 127/255, 1
+    light_green =  197/255, 230/255, 127/255, 1
+    light_green2 = 27/255, 229/255, 127/255, 1
+    light_green3 = 135/255, 230/255, 127/255, 1
+    light_green4 = 193/255, 225/255, 193/255, 1
+    dark_green2 = 37/255, 160/255, 127/255, 1
+    dark1 = 143/255, 188/255, 143/255,1
+    light1 = 60/255, 179/255, 113/255, 1
+    dark2 = 46/255, 139/255, 87/255, 1
 
     def update(self, dt):
         cam = self.help.get_screen('scanner').ids.cam
@@ -78,7 +87,7 @@ class DemoApp(MDApp):
                 # docs = qr_ref.where('scan_id', '==', f'{myData}').get()
                 # for doc in docs:
                 #     self.help.get_screen('qr').ids.forem.text = doc.id
-                # self.help.current = 'qr'
+                self.help.current = 'qr'
                 # webbrowser.open(myData)
                 pts = np.array([barcode.polygon], np.int32)
                 pts = pts.reshape((-1, 1, 2))
