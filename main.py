@@ -31,6 +31,8 @@ from kivy.uix.boxlayout import BoxLayout
 class AndroidCamera(Image):
     pass
 
+class LoginScreen(Screen):
+    pass
 class MenuScreen(Screen):
     pass
 
@@ -70,6 +72,19 @@ class DemoApp(MDApp):
     dark1 = 143/255, 188/255, 143/255,1
     light1 = 60/255, 179/255, 113/255, 1
     dark2 = 46/255, 139/255, 87/255, 1
+
+
+    def sign_in(self):
+        username = self.help.get_screen('login').ids.username.text
+        password = self.help.get_screen('login').ids.password.text
+
+        if username == 'admin' and password == '12345':
+            self.help.current = 'menu'
+            self.help.transition.direction = 'right'
+        
+        else:
+            self.help.get_screen('login').ids.status.text = 'Invalid credentials. Please try again.'
+
 
     def update(self, dt):
         cam = self.help.get_screen('scanner').ids.cam
