@@ -237,10 +237,19 @@ ScreenManager:
         icon: "plus"
         md_bg_color: app.theme_cls.primary_color
         pos_hint: {"center_x": .85, "center_y": .1}
-        # on_press: 
+        on_press: 
+            app.storage_try()
         #     root.manager.current = 'uploaddoc'
         #     root.manager.transition.direction = "left"
-
+<OneLineIcon>:            
+    IconLeftWidget:
+        icon: 'flower-poppy'
+        # on_press:
+        #     print("dsfdfsdasdfasdgasgasfasfsadgadsfasd")
+    IconRightWidget:
+        icon: 'dots-vertical'
+        # on_press:
+        #     app.show_simple_dialog()
 <ScannerScreen>:
     name: 'scanner'
     MDScreen:

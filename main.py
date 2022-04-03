@@ -153,6 +153,11 @@ class DemoApp(MDApp):
         self.search_list()
         # self.on_qr()
 
+    def storage_try(self):
+
+        storage.child("Try/try_file").put("images/food.png")
+        print("ok")
+
     def update(self, dt):
         cam = self.help.get_screen('scanner').ids.cam
         ret, frame = cam.capture.read()
