@@ -32,7 +32,7 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivymd.uix.label import MDLabel
 from kivy.uix.boxlayout import BoxLayout
 
-Window.size=(400,700)
+# Window.size=(400,700)
 
 config = {
     "apiKey": "AIzaSyBH3WOpmUdPj0vGIpneswkW2CS8fFidlXw",
@@ -155,7 +155,7 @@ class DemoApp(MDApp):
 
     def storage_try(self):
 
-        storage.child("Try/try_file").put("images/food.png")
+        storage.child("Tries/try_file").put("images/food.png")
         print("ok")
 
     def update(self, dt):
