@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-/.buildozer
-=======
 buildozer.spec
->>>>>>> 612b1f2bfd979705f69af8c679d64ae62cf45c82
+/.buildozer
+/bin

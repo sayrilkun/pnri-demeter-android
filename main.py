@@ -2,10 +2,11 @@ import cv2
 import numpy as np
 import random
 import webbrowser
+import requests
 
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
+# import firebase_admin
+# from firebase_admin import credentials
+# from firebase_admin import firestore
 import pyrebase
 
 from kivymd.uix.snackbar import Snackbar
@@ -44,8 +45,8 @@ config = {
     "measurementId": "G-00QH790MRG",
 }
 
-cred = credentials.Certificate("serviceAccountKey.json")
-firebase_admin.initialize_app(cred)
+# cred = credentials.Certificate("serviceAccountKey.json")
+# firebase_admin.initialize_app(cred)
 firebase = pyrebase.initialize_app(config)
 storage= firebase.storage()
 
@@ -99,8 +100,8 @@ class DemoApp(MDApp):
     light1 = 60/255, 179/255, 113/255, 1
     dark2 = 46/255, 139/255, 87/255, 1
 
-    global db
-    db= firestore.client()
+    # global db
+    # db= firestore.client()
 
     def sign_in(self):
         username = self.help.get_screen('login').ids.username.text
@@ -116,15 +117,23 @@ class DemoApp(MDApp):
     def search_list(self):
         async def search_list():
 
-            db= firestore.client()
+            # db= firestore.client()
             search=self.help.get_screen('collections').ids.search.text
-            docs = db.collection('Hoya').stream()
-            for doc in docs:
-                if search in doc.id:
+            # docs = db.collection('Hoya').stream()
+            url = "https://v1.nocodeapi.com/sayrilkun/fbsdk/bdwzesmLPRNWrDXq/firestore/allDocuments?collectionName=Hoya/"
+            params = {}
+            r = requests.get(url = url, params = params)
+            result = r.json()
+            # print(result)
+            for i in range(len(result)):
+                name = result[i]["_fieldsProto"]['Name']['stringValue']
+                print(name)
+            # for doc in docs:
+                if search in name:
                     await asynckivy.sleep(0)
                     self.help.get_screen('collections').ids.box.add_widget(
-                        OneLineIcon(text= f'{doc.id}',
-                        # on_press= lambda x, value_for_pass=doc.id: self.passValue(value_for_pass),
+                        OneLineIcon(text= f'{name}',
+                        # on_press= lambda x, value_for_pass=name: self.passValue(value_for_pass),
                         ))
         asynckivy.start(search_list())
 
