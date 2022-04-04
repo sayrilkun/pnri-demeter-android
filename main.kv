@@ -1,12 +1,17 @@
 ScreenManager:
     LoginScreen:
     MenuScreen:
+    # CameraScreen:
+    # ImageScreen:
     CollectionsScreen:
     ScannerScreen:
     QRScreen:
+    GeneratorScreen:
     HelpScreen:
     SettingsScreen:
-    GeneratorScreen:
+    SingleDocScreen:
+    UploadDocScreen:
+    FileManagerScreen:
 
 <LoginScreen>:
     name: 'login'
@@ -238,9 +243,10 @@ ScreenManager:
         md_bg_color: app.theme_cls.primary_color
         pos_hint: {"center_x": .85, "center_y": .1}
         on_press: 
-            app.storage_try()
-        #     root.manager.current = 'uploaddoc'
-        #     root.manager.transition.direction = "left"
+            # app.storage_try()
+            root.manager.current = 'uploaddoc'
+            root.manager.transition.direction = "left"
+
 <OneLineIcon>:            
     IconLeftWidget:
         icon: 'flower-poppy'
@@ -250,6 +256,53 @@ ScreenManager:
         icon: 'dots-vertical'
         # on_press:
         #     app.show_simple_dialog()
+
+
+<CameraScreen>:
+    name: 'camera'
+    MDScreen:
+        md_bg_color:56/255,40/255,81/255,1
+
+
+    MDIconButton:
+        icon:'arrow-left'
+        pos_hint: {'center_x':0.1,'center_y':0.95}
+        on_press: 
+            root.manager.current = 'menu'
+            root.manager.transition.direction = "right"
+    MDBoxLayout:
+        # size_hint_y:.25
+        padding:dp(15)
+        KivyCamera:
+            id: camie
+            size_hint: 1,1
+            pos_hint: {"x":0,"top":1} 
+            # on_parent:
+            #     print('sfadtysf')
+    MDFloatingActionButton:
+        id: capture
+        text: 'Capture'
+        pos_hint: {'center_x':0.5,'center_y':0.2}
+        # on_press: 
+        #     app.camie()
+
+<ImageScreen>:
+    name: 'image'
+    MDScreen:
+        md_bg_color:56/255,40/255,81/255,1
+    MDBoxLayout:
+        # size_hint_y:.25
+        orientation: "vertical"  
+        MDToolbar:
+            md_bg_color:56/255,40/255,81/255,1
+            title: "Image"
+            type_height: "small"
+            left_action_items: [["arrow-left", lambda x : app.swtchScreen('menu')]]
+            right_action_items: [["content-save", lambda x : app.save_img()],["refresh", lambda x: app.show_camie()]]
+        Image: 
+            id: cap_img
+            source: "images/flower.png"
+
 <ScannerScreen>:
     name: 'scanner'
     MDScreen:
@@ -308,8 +361,8 @@ ScreenManager:
         # id: link
         text: 'Go to document'
         pos_hint: {'center_x':0.5,'center_y':0.4}  
-        # on_press:
-        #     app.oks_qr()
+        on_press:
+            app.open_scanned_document()
 
 <SettingsScreen>:
     name: 'settings'
@@ -352,3 +405,262 @@ ScreenManager:
         on_press: 
             root.manager.current = 'menu'
             root.manager.transition.direction = "right"
+
+<SingleDocScreen>:
+    name: 'singledoc'
+    MDScreen:
+        md_bg_color:56/255,40/255,81/255,1
+    MDBoxLayout:
+        orientation: "vertical"
+        MDToolbar:
+            md_bg_color:56/255,40/255,81/255,1
+            id: species
+            title: "Example Tabs"
+            type_height: "small"
+            left_action_items: [["arrow-left", lambda x : app.swtchScreen('collections')]]
+            right_action_items: [["delete", lambda x : app.delete_dialog()], ["dots-vertical", lambda x : app.swtchScreen('collections')]]
+
+        MDTabs:
+            id: tabs
+            background_color: rgba(0,0,0,0)
+            tab_hint_x: True
+            # on_tab_switch: app.on_tab_switch(*args)
+            Tab:
+                title: "Passport Data"
+                MDFloatLayout:
+                    # orientation: "vertical"
+                    MDRoundFlatButton:
+                        id: imag
+                        pos_hint: {"center_x": 0.7, "center_y": 0.95}
+                    MDRoundFlatButton:
+                        id: file
+                        pos_hint: {"center_x": 0.7, "center_y": 0.85}
+                MDBoxLayout:
+                    orientation: "vertical"
+                    # # size_hint_y:.5
+                    padding:dp(15)
+                    AsyncImage:
+                        id: img_url
+                        size_hint_y: None
+                        source: 'http://kivy.org/slides/kivypictures-thumb.jpg'
+                        width: 100
+                        height:  100
+                        allow_stretch: True
+                        pos_hint: {"center_x": 0.3, "center_y": 0.9}
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        padding:dp(5)
+                        ScrollView:
+                            MDList:
+                                id:datas
+                                
+            Tab:
+                title: "Morphology"
+                MDBoxLayout:
+                    orientation: "vertical"
+                    MDLabel:
+                        id: header
+                        text: " "
+                        halign: "center"
+                    MDBoxLayout:
+                        padding:dp(15)
+                        orientation: "vertical"
+                        ScrollView:
+                            MDList:
+                                id:dataso
+            Tab:
+                title: "QR Code"
+                MDBoxLayout:
+                    orientation: "vertical"
+                    padding:dp(30)
+                    AsyncImage:
+                        id: qr_url
+                        size_hint_y: None
+                        # source: 'http://kivy.org/slides/kivypictures-thumb.jpg'
+                        width: 100
+                        height: dp(300)
+                        allow_stretch: True
+                        pos_hint: {"center_x": 0.5, "center_y": 0.95}
+                    MDBoxLayout:
+                        padding:dp(30)
+                        orientation: "vertical"
+                        MDRaisedButton:
+                            id: qr
+                            text: "Save QR Code"
+                            pos_hint: {"center_x": 0.5, "center_y": 0.6}
+
+
+<UploadDocScreen>
+    name: 'uploaddoc'
+
+    MDScreen:
+        md_bg_color:56/255,40/255,81/255,1
+    MDBoxLayout:
+        orientation: "vertical"
+        MDToolbar:
+            md_bg_color:56/255,40/255,81/255,1
+            title: "Upload Data"
+            type_height: "small"
+            left_action_items: [["arrow-left", lambda x : app.swtchScrn()]]
+            
+        MDTabs:
+            id: tabs
+            background_color: rgba(0,0,0,0)
+            tab_hint_x: True
+            Tab:
+                title: "Passport Data"
+                MDTextField:
+                    id: input_1
+                    hint_text: "Name"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.95}
+                    size_hint: .75,0.08
+                    color_mode: 'accent'
+                    mode: "rectangle"
+                MDTextField:
+                    id: input_2
+                    hint_text: "Date Acquired"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.85}
+                    size_hint: .75,0.08
+                    mode: "rectangle"
+                    color_mode: 'accent'
+
+                MDTextField:
+                    id: input_3
+                    hint_text: "Accession Origin"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.75}
+                    size_hint: .75,0.08
+                    mode: "rectangle"
+                    color_mode: 'accent'
+
+                MDTextField:
+                    id: input_4
+                    hint_text: "Project"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.65}
+                    size_hint: .75,0.08
+                    mode: "rectangle"
+                    color_mode: 'accent'
+
+                MDTextField:
+                    id: input_5
+                    hint_text: "Project Leader"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.55}
+                    size_hint: .75,0.08
+                    mode: "rectangle"
+                    color_mode: 'accent'
+
+                MDTextField:
+                    id: input_6
+                    hint_text: "Other Details"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.39}
+                    size_hint: .75,0.20
+                    mode: "rectangle"
+                    multiline: True
+                    color_mode: 'accent'
+
+                MDTextField:
+                    id: input_11
+                    hint_text: "Upload Image"
+                    pos_hint: {"center_x": 0.37, "center_y": 0.24}
+                    size_hint: .50,0.08
+                    mode: "rectangle"
+                    color_mode: 'accent'
+
+                MDTextField:
+                    id: input_12
+                    hint_text: "Upload File"
+                    pos_hint: {"center_x": 0.37, "center_y": 0.14}
+                    size_hint: .50,0.08
+                    mode: "rectangle"
+                    color_mode: 'accent'
+
+                MDRaisedButton:
+                    text: "Browse"
+                    pos_hint: {"center_x": 0.8, "center_y": 0.233}
+                    size_hint: .22,0.065
+                    on_press: 
+                        app.change_type(0)
+                        root.manager.current = 'fileman'
+                        root.manager.transition.direction = "left"
+                        # app.add_img()
+
+                MDRaisedButton:
+                    text: "Browse"
+                    pos_hint: {"center_x": 0.8, "center_y": 0.133}
+                    size_hint: .22,0.065
+                    on_press:
+                        app.change_type(1)
+                        root.manager.current = 'fileman'
+                        root.manager.transition.direction = "left"
+                        
+
+            Tab:
+                title: "Morphology"
+                MDTextField:
+                    id: input_7
+                    hint_text: "Pollinium"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.95}
+                    size_hint: .75,0.08
+                    mode: "rectangle"
+                    color_mode: 'accent'
+
+                MDTextField:
+                    id: input_8
+                    hint_text: "Retinaculum"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.85}
+                    size_hint: .75,0.08
+                    mode: "rectangle"
+                    color_mode: 'accent'
+
+                MDTextField:
+                    id: input_9
+                    hint_text: "Translator"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.75}
+                    size_hint: .75,0.08
+                    mode: "rectangle"
+                    color_mode: 'accent'
+
+                MDTextField:
+                    id: input_10
+                    hint_text: "Caudicle Bulb Diameter"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.65}
+                    size_hint: .75,0.08
+                    mode: "rectangle"
+                    color_mode: 'accent'
+
+                MDRaisedButton:
+                    pos_hint: {'center_x':0.5, 'center_y':0.1}
+                    text: 'Save'
+                    on_press: 
+                        app.upload()
+
+<FileManagerScreen>:
+    name: 'fileman'
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDToolbar:
+            title: "MDFileManager"
+            left_action_items: [["arrow-left", lambda x : app.swtchScreen('uploaddoc')]]
+            elevation: 10
+
+        MDFloatLayout:
+
+            MDRoundFlatIconButton:
+                text: "Open manager"
+                icon: "folder"
+                pos_hint: {'center_x': .5, 'center_y': .6}
+                on_release: root.file_manager_open()
+
+                        
+<Content>:
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "60dp"
+
+    MDList:
+        OneLineListItem:
+            text: "Edit"
+        OneLineListItem:
+            text: "Delete"
+

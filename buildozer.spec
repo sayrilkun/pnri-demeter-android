@@ -37,7 +37,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivy==2.1.0,kivymd,opencv,numpy,pyzbar,pillow, certifi, charset-normalizer,svg.path,Kivg, docutils, gcloud, googleapis-common-protos, httplib2, idna, jws,oauth2client, password-strength, protobuf, pyasn1, pyasn1-modules, pycryptodome, Pygments, pyparsing==2.4.7,  Pyrebase4, python-jwt,  requests, requests-toolbelt, rsa, six, urllib3, jwcrypto, cryptography ,wrapt, deprecated
+requirements = python3,kivy==2.1.0,kivymd,opencv,numpy,pyzbar,pillow, certifi, charset-normalizer,svg.path,Kivg, docutils, gcloud, googleapis-common-protos, httplib2, idna, jws,oauth2client, password-strength, protobuf, pyasn1, pyasn1-modules, pycryptodome, Pygments, pyparsing==2.4.7,  Pyrebase4, python-jwt,  requests, requests-toolbelt, rsa, six, urllib3, jwcrypto, cryptography ,wrapt, deprecated,qrcode
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -93,7 +93,7 @@ fullscreen = 0
 #icon.adaptive_background.filename = %(source.dir)s/data/icon_bg.png
 
 # (list) Permissions
-android.permissions = CAMERA,INTERNET
+android.permissions = CAMERA,INTERNET,STORAGE
 
 # (list) features (adds uses-feature -tags to manifest)
 #android.features = android.hardware.usb.host
