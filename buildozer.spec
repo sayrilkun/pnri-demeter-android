@@ -13,7 +13,7 @@ package.domain = org.demeter
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas
+source.include_exts = py,png,jpg,kv,atlas,gif
 
 # (list) List of inclusions using pattern matching
 #source.include_patterns = assets/*,images/*.png
@@ -37,14 +37,14 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivy==2.1.0,kivymd,opencv,numpy,pyzbar,pillow, certifi, charset-normalizer,svg.path,Kivg, docutils, gcloud, googleapis-common-protos, httplib2, idna, jws,oauth2client, password-strength, protobuf, pyasn1, pyasn1-modules, pycryptodome, Pygments, pyparsing==2.4.7,  Pyrebase4, python-jwt,  requests, requests-toolbelt, rsa, six, urllib3, jwcrypto, cryptography ,wrapt, deprecated,qrcode
+requirements = python3,kivy==2.1.0,kivymd,opencv==4.5.2,numpy,pyzbar,pillow, certifi, charset-normalizer,svg.path,Kivg, docutils, gcloud, googleapis-common-protos, httplib2, idna, jws,oauth2client, password-strength, protobuf, pyasn1, pyasn1-modules, pycryptodome, Pygments, pyparsing==2.4.7,  Pyrebase4, python-jwt,  requests, requests-toolbelt, rsa, six, urllib3, jwcrypto, cryptography ,wrapt, deprecated,qrcode
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
 # requirements.source.kivy = ../../kivy
 
 # (str) Presplash of the application
-#presplash.filename = %(source.dir)s/data/presplash.png
+# presplash.filename = %(source.dir)s/images/plant.gif
 
 # (str) Icon of the application
 icon.filename = %(source.dir)s/images/cams.png
@@ -86,14 +86,14 @@ fullscreen = 0
 # see https://lottiefiles.com/ for examples and https://airbnb.design/lottie/
 # for general documentation.
 # Lottie files can be created using various tools, like Adobe After Effect or Synfig.
-#android.presplash_lottie = "path/to/lottie/file.json"
+# android.presplash_lottie = "./images/plant.json"
 
 # (str) Adaptive icon of the application (used if Android API level is 26+ at runtime)
 #icon.adaptive_foreground.filename = %(source.dir)s/data/icon_fg.png
 #icon.adaptive_background.filename = %(source.dir)s/data/icon_bg.png
 
 # (list) Permissions
-android.permissions = CAMERA,INTERNET,STORAGE
+android.permissions = CAMERA,INTERNET,STORAGE,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE
 
 # (list) features (adds uses-feature -tags to manifest)
 #android.features = android.hardware.usb.host

@@ -33,8 +33,14 @@ from kivymd.uix.label import MDLabel
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.uix.filemanager import MDFileManager
 from kivymd.toast import toast
+from kivy.uix.camera import Camera
+
+from android.storage import app_storage_path, primary_external_storage_path, secondary_external_storage_path
+from android.permissions import request_permissions, Permission
 
 # Window.size=(400,700)
+request_permissions([Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE, Permission.CAMERA])
+primary_ext_storage = primary_external_storage_path()
 
 config = {
     "apiKey": "AIzaSyBH3WOpmUdPj0vGIpneswkW2CS8fFidlXw",
@@ -72,8 +78,37 @@ class OneLine(OneLineListItem):
 
 class OneLineIcon(OneLineAvatarIconListItem):
     pass
-class AndroidCamera(Image):
-    pass
+class AndroidCamera(Camera):
+    camera_resolution = (480, 480)
+    cam_ratio = camera_resolution[0] / camera_resolution[1]
+    # camera_resolution = (100, 100)
+    # counter = 0
+
+    # def _camera_loaded(self, *largs):
+    #     self.texture = Texture.create(size=np.flip(self.camera_resolution), colorfmt='rgb')
+    #     self.texture_size = list(self.texture.size)
+
+    # def on_tex(self, *l):
+    #     if self._camera._buffer is None:
+    #         return None
+    #     frame = self.frame_from_buf()
+
+    #     self.frame_to_screen(frame)
+    #     super(AndroidCamera, self).on_tex(*l)
+
+    # def frame_from_buf(self):
+    #     w, h = self.resolution
+    #     frame = np.frombuffer(self._camera._buffer.tostring(), 'uint8').reshape((h + h // 2, w))
+    #     frame_bgr = cv2.cvtColor(frame, 93)
+    #     return np.rot90(frame_bgr, 3)
+
+    # def frame_to_screen(self, frame):
+    #     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    #     cv2.putText(frame_rgb, str(self.counter), (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+    #     self.counter += 1
+    #     flipped = np.flip(frame_rgb, 0)
+    #     buf = flipped.tostring()
+    #     self.texture.blit_buffer(buf, colorfmt='rgb', bufferfmt='ubyte')
 
 class LoginScreen(Screen):
     pass
@@ -109,7 +144,7 @@ class FileManagerScreen(Screen):
         )
 
     def file_manager_open(self):
-        self.file_manager.show(self.user_data_dir)  # output manager to the screen
+        self.file_manager.show(primary_ext_storage)  # output manager to the screen
         self.manager_open = True
         print(typee)
 
@@ -150,10 +185,33 @@ class Tab(MDFloatLayout, MDTabsBase):
     pass
 
 class ScannerScreen(Screen):
-    def on_leave(self, *args):
-        cam = self.ids.cam
-        cam.capture.release()
+    def on_start(self):
+        Clock.schedule_once(self.get_frame, 5)
 
+    def get_frame(self, dt):    
+        cam = self.ids.a_cam
+        image_object = cam.export_as_image(scale=round((400 / int(cam.height)), 2))
+        w, h = image_object._texture.size
+        frame = np.frombuffer(image_object._texture.pixels, 'uint8').reshape(h, w, 4)
+        gray = cv2.cvtColor(frame, cv2.COLOR_RGBA2GRAY)
+        ret, frame = cam.capture.read()
+        if ret:
+            for barcode in decode(frame):
+                myData = barcode.data.decode('utf-8')
+                print(myData)
+                self.manager.get_screen('qr').ids.forem.text = myData
+
+                # hey = db.child("Hoya").order_by_child("scan_id").equal_to("APDF5JYG").get()
+                # for user in hey.each():
+                #     self.manager.get_screen('qr').ids.forem.text = user.key()        
+                self.manager.current = 'qr'
+
+        # self.ids.frame_counter.text = f'frame: {self.counter}'
+        # self.counter += 1
+        Clock.schedule_once(self.get_frame, 0.25)
+
+    def on_leave(self):
+        event.cancel()
 class QRScreen(Screen):
     # self.help.transition.direction = 'left'
     def on_pre_enter(self):
@@ -359,8 +417,10 @@ class DemoApp(MDApp):
         qr.add_data(input_data)
         qr.make(fit=True)
         img = qr.make_image(fill='black', back_color='white')
-        filename = f'qr_codes/{name}_qr.png'
+        # fname = os.path.join( primary_external_storage_path(),'testfile')
+        filename = f'/storage/emulated/0/Download/{name}_qr.png'
         img.save(filename)
+        # toast(f"{name}_qr.png saved to /storage/emulated/0/Download/")
         storage.child(f"{name}/{name}_qr").put(filename)
         qr_url = storage.child(f"{name}/{name}_qr").get_url(None)
         # print(qr_url)
@@ -617,7 +677,7 @@ class DemoApp(MDApp):
     def show_cam(self):
         cam = self.help.get_screen('scanner').ids.cam
         self.clock_event = Clock.schedule_interval(self.update, 1.0 /30)
-        cam.capture = cv2.VideoCapture(0,cv2.CAP_DSHOW)
+        cam.capture = cv2.VideoCapture(-1)
 
 
 
