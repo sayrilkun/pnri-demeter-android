@@ -1,3 +1,5 @@
+
+
 ScreenManager:
     LoginScreen:
     MenuScreen:
@@ -85,7 +87,7 @@ ScreenManager:
                     spacing:dp(10)
                     MDLabel:
                         text:"Home"
-                        text_size:None,None
+                        
                         adaptive_width:True
                     MDIcon:
                         icon:'chevron-down'
@@ -112,9 +114,7 @@ ScreenManager:
                 subtext:"Monitor Database"
                 items_count:""
                 on_press: 
-                    # app.refresh_callback()
-                    root.manager.current = 'collections'
-                    root.manager.transition.direction = "left"
+                    app.catch_error()
 
             ElementCard:
                 image:"images/scanner.png"
@@ -313,7 +313,7 @@ ScreenManager:
         MDLabel:
             text: 'Place QR Code here'
             halign: 'center'
-            pos_hint: {"center_y": .8}
+            pos_hint: {"center_y": .9}
 
     MDIconButton:
         icon:'arrow-left'
@@ -324,23 +324,25 @@ ScreenManager:
     MDBoxLayout:
         # size_hint_y:.25
         padding:dp(15)
-        AndroidCamera:
-            index: 0
-            id: a_cam
-            resolution: self.camera_resolution
-            allow_stretch: True
-            play: True
-            canvas.before:
-                PushMatrix
-                Rotate:
-                    angle: -90
-                    origin: self.center
-                Scale:
-                    x: self.cam_ratio
-                    y: self.cam_ratio
-                    origin: self.center
-            canvas.after:
-                PopMatrix
+    ZBarCam:
+        id: zbarcam_id
+        # AndroidCamera:
+        #     index: 0
+        #     id: a_cam
+        #     resolution: self.camera_resolution
+        #     allow_stretch: True
+        #     play: True
+        #     canvas.before:
+        #         PushMatrix
+        #         Rotate:
+        #             angle: -90
+        #             origin: self.center
+        #         Scale:
+        #             x: self.cam_ratio
+        #             y: self.cam_ratio
+        #             origin: self.center
+        #     canvas.after:
+        #         PopMatrix
         # KivyCamera:
             # id: cam
             # index: 0
@@ -367,8 +369,8 @@ ScreenManager:
     MDLabel:
         pos_hint: {'center_y':0.5}
         halign: 'center'
-        text: 'hgvj'
-        id: forem
+        text: 'No Document Available'
+        id: data
         theme_text_color: "Custom"
         text_color: 0, 1, 0, 1        
 
@@ -521,7 +523,8 @@ ScreenManager:
             md_bg_color:app.dark2
             title: "Upload Data"
             type_height: "small"
-            left_action_items: [["arrow-left", lambda x : app.swtchScrn()]]
+            left_action_items: [["arrow-left", lambda x : app.swtchScreen('collections')]]
+            right_action_items: [["eraser", lambda x : root.eraser()]]
             
         MDTabs:
             id: tabs
@@ -651,7 +654,8 @@ ScreenManager:
                     pos_hint: {'center_x':0.5, 'center_y':0.1}
                     text: 'Save'
                     on_press: 
-                        app.upload()
+                        app.spin_dialog()
+                        app.upload_thread()
 
 <FileManagerScreen>:
     name: 'fileman'
@@ -684,3 +688,15 @@ ScreenManager:
         OneLineListItem:
             text: "Delete"
 
+<ContentSpin>:
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "60dp"
+
+    MDSpinner:
+        id: spinner
+        size_hint: None, None
+        size: dp(46), dp(46)
+        pos_hint: {'center_x': .5, 'center_y': .5}
+        # active: check.active

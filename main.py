@@ -1,5 +1,5 @@
-import cv2
-import numpy as np
+# import cv2
+# import numpy as np
 import random
 import os
 import webbrowser
@@ -7,9 +7,15 @@ import pyrebase
 import qrcode
 import string
 import requests
+import threading
 
+
+
+from kivy.clock import mainthread
+from kivymd.toast import toast
 from pyzbar.pyzbar import decode
 
+from kivy_garden.zbarcam import ZBarCam
 from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.button import MDIconButton, MDFloatingActionButton
 from kivy.properties import StringProperty
@@ -59,6 +65,8 @@ firebase = pyrebase.initialize_app(config)
 storage= firebase.storage()
 db= firebase.database()
 
+class ContentSpin(BoxLayout):
+    pass
 
 
 class Content(BoxLayout):
@@ -78,9 +86,11 @@ class OneLine(OneLineListItem):
 
 class OneLineIcon(OneLineAvatarIconListItem):
     pass
-class AndroidCamera(Camera):
-    camera_resolution = (480, 480)
-    cam_ratio = camera_resolution[0] / camera_resolution[1]
+
+# class AndroidCamera(Camera):
+#     camera_resolution = (480, 480)
+#     cam_ratio = camera_resolution[0] / camera_resolution[1]
+    
     # camera_resolution = (100, 100)
     # counter = 0
 
@@ -130,8 +140,10 @@ class SingleDocScreen(Screen):
     pass
 
 class UploadDocScreen(Screen):
-    pass
-        
+    def eraser(self):
+        for i in range(1,13):
+            self.manager.get_screen('uploaddoc').ids[f'input_{i}'].text = ""
+
 class FileManagerScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -185,39 +197,72 @@ class Tab(MDFloatLayout, MDTabsBase):
     pass
 
 class ScannerScreen(Screen):
-    def on_start(self):
-        Clock.schedule_once(self.get_frame, 5)
+    # def on_start(self):
+    #     Clock.schedule_once(self.get_frame, 5)
 
-    def get_frame(self, dt):    
-        cam = self.ids.a_cam
-        image_object = cam.export_as_image(scale=round((400 / int(cam.height)), 2))
-        w, h = image_object._texture.size
-        frame = np.frombuffer(image_object._texture.pixels, 'uint8').reshape(h, w, 4)
-        gray = cv2.cvtColor(frame, cv2.COLOR_RGBA2GRAY)
-        ret, frame = cam.capture.read()
-        if ret:
-            for barcode in decode(frame):
-                myData = barcode.data.decode('utf-8')
-                print(myData)
-                self.manager.get_screen('qr').ids.forem.text = myData
+  
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        Clock.schedule_once(self._after_init)
+        # self.ids.zbarcam_id.ids.xcamera.play=True
 
-                # hey = db.child("Hoya").order_by_child("scan_id").equal_to("APDF5JYG").get()
-                # for user in hey.each():
-                #     self.manager.get_screen('qr').ids.forem.text = user.key()        
-                self.manager.current = 'qr'
+    def _after_init(self, dt):
+        """
+        Binds `ZBarCam.on_symbols()` event.
+        """
+        zbarcam = self.ids.zbarcam_id
+        zbarcam.bind(symbols=self.on_symbols)
 
-        # self.ids.frame_counter.text = f'frame: {self.counter}'
-        # self.counter += 1
-        Clock.schedule_once(self.get_frame, 0.25)
+    def on_symbols(self, zbarcam, symbols):
+        """
+        Loads the first symbol data to the `QRFoundScreen.data_property`.
+        """
+        # going from symbols found to no symbols found state would also
+        # trigger `on_symbols`
+        if not symbols:
+            return
 
-    def on_leave(self):
-        event.cancel()
+        # qrfound_screen = self.manager.current_screen
+        symbol = symbols[0]
+        data = symbol.data.decode('utf8')
+        hey = db.child("Hoya").order_by_child("scan_id").equal_to(data).get()
+        for user in hey.each():
+            if user.key() is None or user.key() == " ":
+                self.manager.get_screen('qr').ids.data.text = data
+            else:
+                self.manager.get_screen('qr').ids.data.text = user.key()     
+        print(data)
+        # self.manager.get_screen('qr').ids.data.text= data
+        self.manager.transition.direction = 'left'
+        self.manager.current = 'qr'
+    # def get_frame(self, dt):  
+    #     cam = self.ids.a_cam
+    #     image_object = cam.export_as_image(scale=round((400 / int(cam.height)), 2))
+    #     w, h = image_object._texture.size
+    #     frame = np.frombuffer(image_object._texture.pixels, 'uint8').reshape(h, w, 4)
+    #     gray = cv2.cvtColor(frame, cv2.COLOR_RGBA2GRAY)
+    #     ret, frame = cam.capture.read()
+    #     if ret:
+    #         for barcode in decode(frame):
+    #             myData = barcode.data.decode('utf-8')
+    #             print(myData)
+    #             self.manager.get_screen('qr').ids.forem.text = myData
+
+    #             # hey = db.child("Hoya").order_by_child("scan_id").equal_to("APDF5JYG").get()
+    #             # for user in hey.each():
+    #             #     self.manager.get_screen('qr').ids.forem.text = user.key()        
+    #             self.manager.current = 'qr'
+
+    #     # self.ids.frame_counter.text = f'frame: {self.counter}'
+    #     # self.counter += 1
+    #     Clock.schedule_once(self.get_frame, 0.25)
+
+    # def on_leave(self):
+    #     event.cancel()
 class QRScreen(Screen):
     # self.help.transition.direction = 'left'
     def on_pre_enter(self):
-    #     x=DemoApp()
-    #     x.on_qr()
-        myDate = self.ids.forem.text
+        myDate = self.ids.data.text
         self.ids.link.add_widget(
             MDRaisedButton( text = "Open link",
             on_press = lambda x: webbrowser.open(myDate))
@@ -248,31 +293,11 @@ class DemoApp(MDApp):
 ###################################################################
 # DIALOGS
 ###################################################################
-    dialog1 = None
     dialog2= None
     dialog3= None
     dialog4= None
-    dialog5= None
+    dialog6= None
 
-    def show_donot_dialog(self):
-        if not self.dialog5:
-            self.dialog5 = MDDialog(
-                text= "Uploading Document... DO NOT CLICK ANYWHERE",
-            )
-        self.dialog5.open()
-
-    def show_alert_dialog(self):
-        if not self.dialog1:
-            self.dialog1 = MDDialog(
-                text= "Document Successfully Saved.",
-                buttons=[
-                    MDRaisedButton(text="OK", 
-                    on_press = lambda x : self.swtchScrn('collections'),
-                    on_release = lambda y: self.dialog1.dismiss(force=True)
-                    )
-                ],
-            )
-        self.dialog1.open()
 
     def show_no_doc_dialog(self):
         if not self.dialog2:
@@ -312,6 +337,14 @@ class DemoApp(MDApp):
             )
         self.dialog4.open()
 
+    def spin_dialog(self):
+        if not self.dialog6:
+            self.dialog6 = MDDialog(
+                type="custom",
+                content_cls=ContentSpin(),
+            )
+        self.dialog6.open()
+
 ###################################################################
 # OPEN FILE MANAGER
 ###################################################################
@@ -320,16 +353,12 @@ class DemoApp(MDApp):
 ###################################################################
 # SWITCH SCREEN
 ###################################################################
-    # def swtchScrn(self,*args):
-    #     self.manager.current = 'singledoc'
-    #     self.manager.transition.direction = 'left'
 
     def swtchScrn(self,*args):
         self.search_callback()
         self.help.current = 'collections'
         self.help.transition.direction = 'right'
-        for i in range(1,13):
-            self.help.get_screen('uploaddoc').ids[f'input_{i}'].text = ""
+
 
     def swtchScreen(self,screen,*args):
         # self.refresh_callback()
@@ -348,19 +377,11 @@ class DemoApp(MDApp):
 # OPEN SCANNED DOCUMENT TO APP
 ###################################################################
     def open_scanned_document(self):
-        myDate = self.help.get_screen('qr').ids.forem.text
-        doc_ref = db.child('Hoya').child(myDate)
-        
-
-        doc = doc_ref.get()
-        if doc.exists:
+        myDate = self.help.get_screen('qr').ids.data.text
+        try:
             self.passValue(myDate)
-            print (myDate)
-            # bal = u'{}'.format(get_bal.to_dict()['Balance'])
-            # print(f'Document data: {doc.to_dict()}')
-        else:
-            print(u'No such document!')
-            self.show_no_doc_dialog()
+        except Exception as e:
+            toast("No Such Document!")
 
 ###################################################################
 # OPEN SCANNED LINK TO WEBSITE
@@ -381,28 +402,6 @@ class DemoApp(MDApp):
         ran = ''.join(random.choices(string.ascii_uppercase + string.digits, k = S))    
         x= str(ran)
         return x
-
-###################################################################
-# CHOOSE IMAGE FROM FILE MANAGER
-###################################################################
-    def add_img(self):
-        root = tk.Tk()
-        root.withdraw()
-        image = filedialog.askopenfilename()
-        print(image)
-        # print(file)
-        self.help.get_screen('uploaddoc').ids.input_11.text = image
-
-###################################################################
-# CHOOSE FILE FROM FILE MANAGER
-###################################################################
-    def add_file(self):
-        root = tk.Tk()
-        root.withdraw()
-        file = filedialog.askopenfilename()
-        print(file)
-        # print(file)
-        self.help.get_screen('uploaddoc').ids.input_12.text = file
 
 ###################################################################
 # GENERATE QR CODE
@@ -499,11 +498,23 @@ class DemoApp(MDApp):
 
         db.child('Hoya').child(f'{name}').set(data)
 
-        self.show_alert_dialog()
+        self.dialog6.dismiss(force=True)
+        toast("Document Saved Successfully")
+        self.swtchScrn()
 
+    def upload_thread(self):
+        threading.Thread(target=(self.upload)).start()
 ###################################################################
 # GET DOCUMENT LISTS FROM DATABASE
 ###################################################################
+    def catch_error(self):
+        try:
+            self.help.current = 'collections'
+            self.help.transition.direction = "left"
+
+        except requests.exceptions.ConnectionError:
+            toast("NO INTERNET CONNECTION")
+
     def search_list(self):
         async def search_list():
 
@@ -537,32 +548,23 @@ class DemoApp(MDApp):
 # GET DATA FOR EACH DOCUMENT
 ###################################################################
     def passValue(self, *args):
+        self.help.current = 'singledoc'    
+        self.help.transition.direction = 'left'
         
         args_str = ','.join(map(str,args))
         print(args_str)
-        single_doc = db.child("Hoya").child(args_str)
-        
-
-
-
-        # doc_ref = db.collection('Hoya').document(args_str)
-        # single_doc = doc_ref.get()
-        # datos= f'{single_doc.to_dict()}'
-        # print(datos)
-        # format_1=datos.strip("{}")
-        # format_2=format_1.spl it(',')
-        # format_3=format_2.replace(" ' ", " ")
-        # print(format_2)
+        # single_doc = db.child("Hoya").child(args_str)
 
         icon = 'https://firebasestorage.googleapis.com/v0/b/pnri-demeter.appspot.com/o/flower.png?alt=media&token=3553abca-251f-42a3-b939-5d8eefc10a9a'
         passportData = ['Name','Date of Acquisition', 'Accession Origin', 'Project', 'Project Leader', 'Other Detals']
         morphology = ['Pollinium', 'Retinaculum', 'Caudicle Bulb Diameter', 'Translator']
 
-        img_url = single_doc.child("img_url").get().val()
-        print(img_url)
-        qr_url= single_doc.child("qr_url").get().val()
-        file_url= single_doc.child("file_url").get().val()
-
+        img_url = db.child("Hoya").child(args_str).child("img_url").get().val()
+        print(f"img:{img_url}")
+        qr_url= db.child("Hoya").child(args_str).child("qr_url").get().val()
+        print(f"qr:{qr_url}")
+        file_url= db.child("Hoya").child(args_str).child("file_url").get().val()
+        print(f"img:{file_url}")
         screen2 = self.help.get_screen('singledoc')
         screen2.ids.datas.clear_widgets()
 
@@ -629,12 +631,14 @@ class DemoApp(MDApp):
                 )
             )
         # print(format_2[i])
-        self.help.current = 'singledoc'    
-        self.help.transition.direction = 'left'
+
 
     def on_start(self):
-        self.search_list()
-        # self.on_qr()
+        try:
+            self.search_list()
+
+        except requests.exceptions.ConnectionError:
+            pass
 
     def storage_try(self):
 

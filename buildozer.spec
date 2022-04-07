@@ -36,8 +36,8 @@ version = 0.1
 # version.filename = %(source.dir)s/main.py
 
 # (list) Application requirements
-# comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivy==2.1.0,kivymd,opencv==4.5.2,numpy,pyzbar,pillow, certifi, charset-normalizer,svg.path,Kivg, docutils, gcloud, googleapis-common-protos, httplib2, idna, jws,oauth2client, password-strength, protobuf, pyasn1, pyasn1-modules, pycryptodome, Pygments, pyparsing==2.4.7,  Pyrebase4, python-jwt,  requests, requests-toolbelt, rsa, six, urllib3, jwcrypto, cryptography ,wrapt, deprecated,qrcode
+# comma separated e.g. requirements = sqlite3,kivy,opencv==4.5.2, numpy,kivy-garden.xcamera==2019.928,kivy-garden.zbarcam==2020.524,libzbar,android,decorator,libiconv,plyer
+requirements = python3,kivy==2.1.0,kivymd,pyzbar,Pillow, certifi, charset-normalizer,svg.path,Kivg, docutils, gcloud, googleapis-common-protos, httplib2, idna, jws,oauth2client, password-strength, protobuf, pyasn1, pyasn1-modules, pycryptodome, Pygments, pyparsing==2.4.7,  Pyrebase4, python-jwt,  requests, requests-toolbelt, rsa, six, urllib3, jwcrypto, cryptography ,wrapt, deprecated,qrcode,android,libiconv,libzbar,plyer,zbarcam,xcamera
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -297,7 +297,7 @@ android.allow_backup = True
 #p4a.fork = kivy
 
 # (str) python-for-android branch to use, defaults to master
-#p4a.branch = master
+# p4a.branch = develop
 
 # (str) python-for-android specific commit to use, defaults to HEAD, must be within p4a.branch
 #p4a.commit = HEAD
