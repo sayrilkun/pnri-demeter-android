@@ -196,45 +196,45 @@ class FileManagerScreen(Screen):
 class Tab(MDFloatLayout, MDTabsBase):
     pass
 
-class ScannerScreen(Screen):
-    # def on_start(self):
-    #     Clock.schedule_once(self.get_frame, 5)
+# class ScannerScreen(Screen):
+#     # def on_start(self):
+#     #     Clock.schedule_once(self.get_frame, 5)
 
   
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        Clock.schedule_once(self._after_init)
-        # self.ids.zbarcam_id.ids.xcamera.play=True
+#     def __init__(self, **kwargs):
+#         super().__init__(**kwargs)
+#         Clock.schedule_once(self._after_init)
+#         # self.ids.zbarcam_id.ids.xcamera.play=True
 
-    def _after_init(self, dt):
-        """
-        Binds `ZBarCam.on_symbols()` event.
-        """
-        zbarcam = self.ids.zbarcam_id
-        zbarcam.bind(symbols=self.on_symbols)
+#     def _after_init(self, dt):
+#         """
+#         Binds `ZBarCam.on_symbols()` event.
+#         """
+#         zbarcam = self.ids.zbarcam_id
+#         zbarcam.bind(symbols=self.on_symbols)
 
-    def on_symbols(self, zbarcam, symbols):
-        """
-        Loads the first symbol data to the `QRFoundScreen.data_property`.
-        """
-        # going from symbols found to no symbols found state would also
-        # trigger `on_symbols`
-        if not symbols:
-            return
+#     def on_symbols(self, zbarcam, symbols):
+#         """
+#         Loads the first symbol data to the `QRFoundScreen.data_property`.
+#         """
+#         # going from symbols found to no symbols found state would also
+#         # trigger `on_symbols`
+#         if not symbols:
+#             return
 
-        # qrfound_screen = self.manager.current_screen
-        symbol = symbols[0]
-        data = symbol.data.decode('utf8')
-        hey = db.child("Hoya").order_by_child("scan_id").equal_to(data).get()
-        for user in hey.each():
-            if user.key() is None or user.key() == " ":
-                self.manager.get_screen('qr').ids.data.text = data
-            else:
-                self.manager.get_screen('qr').ids.data.text = user.key()     
-        print(data)
-        # self.manager.get_screen('qr').ids.data.text= data
-        self.manager.transition.direction = 'left'
-        self.manager.current = 'qr'
+#         # qrfound_screen = self.manager.current_screen
+#         symbol = symbols[0]
+#         data = symbol.data.decode('utf8')
+#         hey = db.child("Hoya").order_by_child("scan_id").equal_to(data).get()
+#         for user in hey.each():
+#             if user.key() is None or user.key() == " ":
+#                 self.manager.get_screen('qr').ids.data.text = data
+#             else:
+#                 self.manager.get_screen('qr').ids.data.text = user.key()     
+#         print(data)
+#         # self.manager.get_screen('qr').ids.data.text= data
+#         self.manager.transition.direction = 'left'
+#         self.manager.current = 'qr'
     # def get_frame(self, dt):  
     #     cam = self.ids.a_cam
     #     image_object = cam.export_as_image(scale=round((400 / int(cam.height)), 2))
@@ -259,14 +259,15 @@ class ScannerScreen(Screen):
 
     # def on_leave(self):
     #     event.cancel()
-class QRScreen(Screen):
-    # self.help.transition.direction = 'left'
-    def on_pre_enter(self):
-        myDate = self.ids.data.text
-        self.ids.link.add_widget(
-            MDRaisedButton( text = "Open link",
-            on_press = lambda x: webbrowser.open(myDate))
-        )
+
+# class QRScreen(Screen):
+#     # self.help.transition.direction = 'left'
+#     def on_pre_enter(self):
+#         myDate = self.ids.data.text
+#         self.ids.link.add_widget(
+#             MDRaisedButton( text = "Open link",
+#             on_press = lambda x: webbrowser.open(myDate))
+#         )
 
 class DemoApp(MDApp):
 
@@ -337,6 +338,7 @@ class DemoApp(MDApp):
             )
         self.dialog4.open()
 
+    @mainthread
     def spin_dialog(self):
         if not self.dialog6:
             self.dialog6 = MDDialog(
@@ -399,7 +401,7 @@ class DemoApp(MDApp):
     def generate(self):
         S = 8  # number of characters in the string.  
         # call random.choices() string module to find the string in Uppercase + numeric data.  
-        ran = ''.join(random.choices(string.ascii_uppercase + string.digits, k = S))    
+        ran = 'nu'+''.join(random.choices(string.ascii_uppercase + string.digits, k = S))    
         x= str(ran)
         return x
 
@@ -528,7 +530,8 @@ class DemoApp(MDApp):
                     await asynckivy.sleep(0)
                     self.help.get_screen('collections').ids.box.add_widget(
                         OneLineIcon(text= f'{name}',
-                        on_press= lambda x, value_for_pass=name: self.passValue(value_for_pass),
+                        on_press= lambda y: self.spin_dialog(),
+                        on_release= lambda x, value_for_pass=name: self.passValue_thread(value_for_pass),
                         ))
         asynckivy.start(search_list())
 
@@ -547,9 +550,11 @@ class DemoApp(MDApp):
 ###################################################################
 # GET DATA FOR EACH DOCUMENT
 ###################################################################
+    def passValue_thread(self,*args):
+        threading.Thread(target=self.passValue, args = args).start()
+
     def passValue(self, *args):
-        self.help.current = 'singledoc'    
-        self.help.transition.direction = 'left'
+
         
         args_str = ','.join(map(str,args))
         print(args_str)
@@ -632,6 +637,9 @@ class DemoApp(MDApp):
             )
         # print(format_2[i])
 
+        self.help.current = 'singledoc'    
+        self.help.transition.direction = 'left'
+        self.dialog6.dismiss(force=True)
 
     def on_start(self):
         try:
@@ -639,51 +647,6 @@ class DemoApp(MDApp):
 
         except requests.exceptions.ConnectionError:
             pass
-
-    def storage_try(self):
-
-        storage.child("Try/try_file").put("images/food.png")
-        print("ok")
-
-    def update(self, dt):
-        cam = self.help.get_screen('scanner').ids.cam
-        ret, frame = cam.capture.read()
-        # duts = []
-        if ret:
-            # cv2.putText(frame, 'dfgd', (50, 50),
-            #                 cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 255), 2)
-            
-            for barcode in decode(frame):
-                
-                myData = barcode.data.decode('utf-8')
-                self.help.get_screen('qr').ids.forem.text = myData
-                qr_ref = db.child('Hoya')
-                docs = qr_ref.where('scan_id', '==', f'{myData}').get()
-                for doc in docs:
-                    self.help.get_screen('qr').ids.forem.text = doc.id
-                self.help.current = 'qr'
-                # webbrowser.open(myData)
-                pts = np.array([barcode.polygon], np.int32)
-                pts = pts.reshape((-1, 1, 2))
-                cv2.polylines(frame, [pts], True, (255, 0, 255), 5)
-                pts2 = barcode.rect
-                cv2.putText(frame, myData,(pts2[0],pts2[1]),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 255), 2)
-                            
-            buf1 = cv2.flip(frame, -1)
-            buf = buf1.tobytes()
-            image_texture =Texture.create(
-                size = (frame.shape[1], frame.shape[0]), colorfmt='bgr'
-            )
-            image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-            cam.texture = image_texture
-
-    def show_cam(self):
-        cam = self.help.get_screen('scanner').ids.cam
-        self.clock_event = Clock.schedule_interval(self.update, 1.0 /30)
-        cam.capture = cv2.VideoCapture(-1)
-
-
 
     def build(self):        
         self.title='Demeter'

@@ -47,7 +47,7 @@ requirements = python3,kivy==2.1.0,kivymd,pyzbar,Pillow, certifi, charset-normal
 # presplash.filename = %(source.dir)s/images/plant.gif
 
 # (str) Icon of the application
-icon.filename = %(source.dir)s/images/cams.png
+icon.filename = %(source.dir)s/images/gflo.png
 
 # (str) Supported orientation (one of landscape, sensorLandscape, portrait or all)
 orientation = portrait
