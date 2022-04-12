@@ -40,13 +40,15 @@ from kivy.uix.boxlayout import BoxLayout
 from kivymd.uix.filemanager import MDFileManager
 from kivymd.toast import toast
 from kivy.uix.camera import Camera
+import platform
 
-from android.storage import app_storage_path, primary_external_storage_path, secondary_external_storage_path
-from android.permissions import request_permissions, Permission
+if platform == 'android':
+    from android.storage import app_storage_path, primary_external_storage_path, secondary_external_storage_path
+    from android.permissions import request_permissions, Permission
 
-# Window.size=(400,700)
-request_permissions([Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE, Permission.CAMERA])
-primary_ext_storage = primary_external_storage_path()
+    # Window.size=(400,700)
+    request_permissions([Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE, Permission.CAMERA])
+    primary_ext_storage = primary_external_storage_path()
 
 config = {
     "apiKey": "AIzaSyBH3WOpmUdPj0vGIpneswkW2CS8fFidlXw",
@@ -156,7 +158,10 @@ class FileManagerScreen(Screen):
         )
 
     def file_manager_open(self):
-        self.file_manager.show(primary_ext_storage)  # output manager to the screen
+        if platform == 'android':
+            self.file_manager.show(primary_ext_storage)  # output manager to the screen
+        else:
+            self.file_manager.show('C:\\')  # output manager to the screen
         self.manager_open = True
         print(typee)
 
@@ -419,7 +424,10 @@ class DemoApp(MDApp):
         qr.make(fit=True)
         img = qr.make_image(fill='black', back_color='white')
         # fname = os.path.join( primary_external_storage_path(),'testfile')
-        filename = f'/storage/emulated/0/Download/{name}_qr.png'
+        if platform == 'android':
+            filename = f'/storage/emulated/0/Download/{name}_qr.png'
+        else:
+            filename = f'qr_codes/{name}_qr.png'
         img.save(filename)
         # toast(f"{name}_qr.png saved to /storage/emulated/0/Download/")
         storage.child(f"{name}/{name}_qr").put(filename)
