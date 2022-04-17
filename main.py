@@ -8,6 +8,8 @@ import qrcode
 import string
 import requests
 import threading
+import concurrent.futures
+
 
 
 
@@ -42,13 +44,13 @@ from kivymd.toast import toast
 from kivy.uix.camera import Camera
 import platform
 
-if platform == 'android':
-    from android.storage import app_storage_path, primary_external_storage_path, secondary_external_storage_path
-    from android.permissions import request_permissions, Permission
+# if platform == 'android':
+from android.storage import app_storage_path, primary_external_storage_path, secondary_external_storage_path
+from android.permissions import request_permissions, Permission
 
-    # Window.size=(400,700)
-    request_permissions([Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE, Permission.CAMERA])
-    primary_ext_storage = primary_external_storage_path()
+# Window.size=(400,700)
+request_permissions([Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE, Permission.CAMERA])
+primary_ext_storage = primary_external_storage_path()
 
 config = {
     "apiKey": "AIzaSyBH3WOpmUdPj0vGIpneswkW2CS8fFidlXw",
@@ -158,10 +160,10 @@ class FileManagerScreen(Screen):
         )
 
     def file_manager_open(self):
-        if platform == 'android':
-            self.file_manager.show(primary_ext_storage)  # output manager to the screen
-        else:
-            self.file_manager.show('C:\\')  # output manager to the screen
+        # if platform == 'android':
+        self.file_manager.show(primary_ext_storage)  # output manager to the screen
+        # else:
+        #     self.file_manager.show('C:\\')  # output manager to the screen
         self.manager_open = True
         print(typee)
 
@@ -353,11 +355,6 @@ class DemoApp(MDApp):
         self.dialog6.open()
 
 ###################################################################
-# OPEN FILE MANAGER
-###################################################################
-
-
-###################################################################
 # SWITCH SCREEN
 ###################################################################
 
@@ -406,7 +403,7 @@ class DemoApp(MDApp):
     def generate(self):
         S = 8  # number of characters in the string.  
         # call random.choices() string module to find the string in Uppercase + numeric data.  
-        ran = 'nu'+''.join(random.choices(string.ascii_uppercase + string.digits, k = S))    
+        ran = 'ac&@%!'+''.join(random.choices(string.ascii_uppercase + string.digits, k = S))    
         x= str(ran)
         return x
 
@@ -424,10 +421,10 @@ class DemoApp(MDApp):
         qr.make(fit=True)
         img = qr.make_image(fill='black', back_color='white')
         # fname = os.path.join( primary_external_storage_path(),'testfile')
-        if platform == 'android':
-            filename = f'/storage/emulated/0/Download/{name}_qr.png'
-        else:
-            filename = f'qr_codes/{name}_qr.png'
+        # if platform == 'android':
+        filename = f'/storage/emulated/0/Download/{name}_qr.png'
+        # else:
+        #     filename = f'qr_codes/{name}_qr.png'
         img.save(filename)
         # toast(f"{name}_qr.png saved to /storage/emulated/0/Download/")
         storage.child(f"{name}/{name}_qr").put(filename)
@@ -514,6 +511,8 @@ class DemoApp(MDApp):
 
     def upload_thread(self):
         threading.Thread(target=(self.upload)).start()
+    
+
 ###################################################################
 # GET DOCUMENT LISTS FROM DATABASE
 ###################################################################
@@ -538,8 +537,8 @@ class DemoApp(MDApp):
                     await asynckivy.sleep(0)
                     self.help.get_screen('collections').ids.box.add_widget(
                         OneLineIcon(text= f'{name}',
-                        on_press= lambda y: self.spin_dialog(),
-                        on_release= lambda x, value_for_pass=name: self.passValue_thread(value_for_pass),
+                        # on_press= lambda y: self.spin_dialog(),
+                        on_release= lambda x, value_for_pass=name: self.passValue(value_for_pass),
                         ))
         asynckivy.start(search_list())
 
@@ -558,26 +557,22 @@ class DemoApp(MDApp):
 ###################################################################
 # GET DATA FOR EACH DOCUMENT
 ###################################################################
-    def passValue_thread(self,*args):
-        threading.Thread(target=self.passValue, args = args).start()
 
     def passValue(self, *args):
-
-        
+        self.help.current = 'singledoc'    
+        self.help.transition.direction = 'left' 
+        # self.spin_dialog()
         args_str = ','.join(map(str,args))
         print(args_str)
-        # single_doc = db.child("Hoya").child(args_str)
 
         icon = 'https://firebasestorage.googleapis.com/v0/b/pnri-demeter.appspot.com/o/flower.png?alt=media&token=3553abca-251f-42a3-b939-5d8eefc10a9a'
         passportData = ['Name','Date of Acquisition', 'Accession Origin', 'Project', 'Project Leader', 'Other Detals']
         morphology = ['Pollinium', 'Retinaculum', 'Caudicle Bulb Diameter', 'Translator']
 
         img_url = db.child("Hoya").child(args_str).child("img_url").get().val()
-        print(f"img:{img_url}")
         qr_url= db.child("Hoya").child(args_str).child("qr_url").get().val()
-        print(f"qr:{qr_url}")
         file_url= db.child("Hoya").child(args_str).child("file_url").get().val()
-        print(f"img:{file_url}")
+
         screen2 = self.help.get_screen('singledoc')
         screen2.ids.datas.clear_widgets()
 
@@ -643,11 +638,10 @@ class DemoApp(MDApp):
                     # halign="center"
                 )
             )
-        # print(format_2[i])
+        print(format_2[i])
+   
+        # self.dialog6.dismiss(force=True)
 
-        self.help.current = 'singledoc'    
-        self.help.transition.direction = 'left'
-        self.dialog6.dismiss(force=True)
 
     def on_start(self):
         try:
