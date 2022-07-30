@@ -1,0 +1,84 @@
+<SettingsScreen>:
+    name: 'settings'
+    MDScreen:
+        md_bg_color:app.dark2
+    MDLabel:
+        text: 'Settings'
+        halign: 'center'
+        font_style: 'H6'
+        pos_hint: {'center_x':0.5,'center_y':0.95}
+
+    MDIconButton:
+        icon:'arrow-left'
+        pos_hint: {'center_x':0.1,'center_y':0.95}
+        on_press: 
+            root.manager.current = 'menu'
+            root.manager.transition.direction = "right"
+            
+    MDTextField:
+        id: input_7
+        hint_text: "Current Username"
+        pos_hint: {"center_x": 0.5, "center_y": 0.75}
+        size_hint: .75,0.075
+        mode: "rectangle"
+        color_mode: 'accent'
+
+    MDTextField:
+        id: input_8
+        hint_text: "New Username"
+        pos_hint: {"center_x": 0.5, "center_y": 0.65}
+        size_hint: .75,0.075
+        mode: "rectangle"
+        color_mode: 'accent'
+
+    MDTextField:
+        id: input_9
+        hint_text: "Current Password"
+        pos_hint: {"center_x": 0.5, "center_y": 0.55}
+        size_hint: .75,0.075
+        mode: "rectangle"
+        color_mode: 'accent'
+        password: True
+
+    MDTextField:
+        id: input_10
+        hint_text: "New Password"
+        pos_hint: {"center_x": 0.5, "center_y": 0.45}
+        size_hint: .75,0.075
+        mode: "rectangle"
+        color_mode: 'accent'
+        password: True
+
+    MDRaisedButton:
+        id: input_11
+        text: "Change Credentials"
+        pos_hint: {"center_x": 0.5, "center_y": 0.35}
+        on_press: root.changeCred()
+
+    MDFloatLayout:
+
+        Checker:
+            id: admin
+            active: True
+            pos_hint: {'center_x': .4, 'center_y': .85}
+            on_press: root.admin_state('admin')
+
+        Checker:
+            id:user
+            pos_hint: {'center_x': .6, 'center_y': .85}
+            on_press: root.admin_state('user')
+
+        MDLabel:
+            halign: "center"
+            text: "Admin"
+            pos_hint: {'center_x': .4, 'center_y': .89}
+
+        MDLabel:
+            halign: "center"
+            text: "User"
+            pos_hint: {'center_x': .6, 'center_y': .89}
+
+<Checker@MDCheckbox>:
+    group: 'group'
+    size_hint: None, None
+    size: dp(48), dp(48)

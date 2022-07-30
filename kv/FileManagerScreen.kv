@@ -1,0 +1,17 @@
+<FileManagerScreen>:
+    name: 'fileman'
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDToolbar:
+            title: "File Manager"
+            left_action_items: [["arrow-left", lambda x : app.swtchScreen('uploaddoc')]]
+            elevation: 10
+
+        MDFloatLayout:
+
+            MDRoundFlatIconButton:
+                text: "Open manager"
+                icon: "folder"
+                pos_hint: {'center_x': .5, 'center_y': .6}
+                on_release: root.file_manager_open()

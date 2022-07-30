@@ -1,681 +1,46 @@
-
-
 ScreenManager:
     LoginScreen:
     MenuScreen:
     # CameraScreen:
     # ImageScreen:
     CollectionsScreen:
-    # ScannerScreen:
+    ScannerScreen:
     # QRScreen:
-    GeneratorScreen:
+    # IdentifierScreen:
     HelpScreen:
     SettingsScreen:
     SingleDocScreen:
     UploadDocScreen:
     FileManagerScreen:
 
-<LoginScreen>:
-    name: 'login'
-    MDScreen:
-        md_bg_color: app.dark2
-    # MDBoxLayout:
-    #     orientation: "vertical"
-    #     padding:dp(25)
-    #     Image:
-    #         source: 'login/icon.png'
-    # MDBoxLayout:
-    #     orientation: "vertical"
-    #     padding:dp(25)
-    Image: 
-        source: 'images/gflo.png'
-        pos_hint: {"center_x": 0.5, "center_y": 0.75}
-        size_hint_y: None
-        height:'4.150cm'
+    # EditScreen:
+    # ResultScreen:
 
-        # width: 10
-        # height: dp(100)
-        # allow_stretch: True
-    MDTextFieldRound:
-        id: username
-        hint_text: 'Username'
-        pos_hint: {"center_x": 0.5, "center_y": 0.55}
-        size_hint: .75,0.08
-        color_mode: 'accent'
-        icon_left: "account-check"
-        hint_text: "Username"
-    MDTextFieldRound:
-        id: password  
-        icon_left: "key-variant"
-        icon_right: 'eye-off'
-        hint_text: 'Password'
-        pos_hint: {"center_x": 0.5, "center_y": 0.45}
-        size_hint: .75,0.08
-        color_mode: 'accent'
-        password: True
-
-    MDLabel:
-        id: status
-        text: ''
-        halign: 'center'
-        pos_hint: {"center_y": 0.35}
-    
-    MDRaisedButton:
-        text: 'Sign In'
-        pos_hint: {"center_x": 0.5, "center_y": 0.25}
-        on_press: 
-            app.sign_in()
-
-<MenuScreen>:
-    name: 'menu'
-    MDScreen:
-        md_bg_color: app.dark2
-        on_enter:
-            print('sfadseryeryetf')
-    MDBoxLayout:
-        orientation:'vertical'
-        MDBoxLayout:
-            size_hint_y:.25
-            padding:dp(25)
-            MDBoxLayout:
-                orientation:"vertical"
-                MDLabel:
-                    text:"Dashboard"
-                    font_style:"H4"
-                MDBoxLayout:
-                    adaptive_size:True
-                    spacing:dp(10)
-                    MDLabel:
-                        text:"Home"
-                        
-                        adaptive_width:True
-                    MDIcon:
-                        icon:'chevron-down'
-
-        MDGridLayout:
-            size_hint_y:.75
-            cols:2
-            padding:[dp(15),dp(15),dp(15),dp(35)]
-            spacing:dp(15)
-            
-            ElementCard:
-                image:"images/cams.png"
-                text:"Camera"
-                subtext:"Morphometric Analysis"
-                items_count: ""
-                on_press: 
-                    # root.manager.current = 'camera'
-                    # root.manager.transition.direction = "left"
-                    # app.show_camie()
-
-            ElementCard:
-                image:"images/flower.png"
-                text:"Collections"
-                subtext:"Monitor Database"
-                items_count:""
-                on_press: 
-                    app.catch_error()
-
-            ElementCard:
-                image:"images/scanner.png"
-                text:"QR Code Scanner"
-                subtext:""
-                items_count:""
-                # on_press: 
-                #     root.manager.current = 'scanner'
-                #     root.manager.transition.direction = "left"
-                    # app.show_cam()
-
-            ElementCard:
-                image: "images/gener.png"
-                text:"QR Code Generator"
-                items_count:""
-                subtext:""
-                on_press: 
-                    root.manager.current = 'generator'
-                    root.manager.transition.direction = "left"
-                    
-            ElementCard:
-                image:"images/help.png"
-                text:"Help"
-                subtext:"How to use the App"
-                items_count:""
-                on_press: 
-                    root.manager.current = 'help'
-                    root.manager.transition.direction = "left"
-
-            ElementCard:
-                image:"images/setting.png"
-                text:"Settings"
-                subtext:""
-                items_count:""
-                on_press: 
-                    root.manager.current = 'settings'
-                    root.manager.transition.direction = "left"
-
-<ElementCard@MDCard>:
-    md_bg_color:app.dark1
-    padding:dp(15)
-    spacing:dp(15)
-    radius:dp(25)
-    ripple_behavior: True
-    image:''
-    text:""
-    items_count:""
-    subtext:''
-
-    orientation:'vertical'
-    Image:
-        source:root.image
-    MDBoxLayout:
-        orientation:'vertical'
-        MDLabel:
-            halign:"center"
-            text:root.text
-            font_style:"H6"
-        MDLabel:
-            halign:"center"
-            font_style:"Caption"
-            text:root.subtext
-        MDLabel:
-            halign:"center"
-            text:root.items_count   
-
-<CollectionsScreen>:
-    name: 'collections'
-    MDScreen:
-        md_bg_color:app.dark2
-        MDIconButton:
-            icon:'arrow-left'
-            pos_hint: {'center_x':0.06,'center_y':0.95}
-            on_press: 
-                root.manager.current = 'menu'
-                root.manager.transition.direction = "right"
-        
-        MDIconButton:
-            icon:'refresh'
-            pos_hint: {'center_x':0.94,'center_y':0.95}
-            on_press: 
-                app.search_callback()
-
-    MDBoxLayout:
-        orientation:'vertical'
-
-        MDBoxLayout:
-            size_hint_y:.25
-            padding:dp(15)
-            MDBoxLayout:
-                padding:dp(15)
-                orientation:"vertical"
-                MDLabel:
-                    text:"Collections"
-                    font_style:"H6"
-                    halign: "center"
-                # MDBoxLayout:
-                #     adaptive_size:True
-                #     spacing:dp(10)
-
-                MDTextFieldRound:
-                    id:search
-                    hint_text: 'Press enter to search'
-                    on_text_validate: app.search_callback()
-                    icon_right: 'close'
-                    # on_press:
-                    #     print("dsfsdf")
-        MDBoxLayout:
-            # size_hint_y:.25
-            padding:dp(15)
-            MDScrollViewRefreshLayout:
-                id: refresh_layout
-                refresh_callback: app.search_callback
-                root_layout: root
-                # MDList:
-                #     id: box
-                #     # on_parent: app.set_list()
-
-                MDGridLayout:
-                    id: box
-                    adaptive_height: True
-                    cols: 1
-
-    MDFloatingActionButton:
-        icon: "plus"
-        md_bg_color: app.theme_cls.primary_color
-        pos_hint: {"center_x": .85, "center_y": .1}
-        on_press: 
-            # app.storage_try()
-            root.manager.current = 'uploaddoc'
-            root.manager.transition.direction = "left"
-
-<OneLineIcon>:            
+<OneLineIcon>:     
+    text: root.text
+    on_press: print(self.text)
     IconLeftWidget:
         icon: 'flower-poppy'
         # on_press:
         #     print("dsfdfsdasdfasdgasgasfasfsadgadsfasd")
     IconRightWidget:
-        icon: 'dots-vertical'
-        # on_press:
-        #     app.show_simple_dialog()
-
-
-<CameraScreen>:
-    name: 'camera'
-    MDScreen:
-        md_bg_color:app.dark2
-
-
-    MDIconButton:
-        icon:'arrow-left'
-        pos_hint: {'center_x':0.1,'center_y':0.95}
-        on_press: 
-            root.manager.current = 'menu'
-            root.manager.transition.direction = "right"
-    MDBoxLayout:
-        # size_hint_y:.25
-        padding:dp(15)
-        KivyCamera:
-            id: camie
-            size_hint: 1,1
-            pos_hint: {"x":0,"top":1} 
-            # on_parent:
-            #     print('sfadtysf')
-    MDFloatingActionButton:
-        id: capture
-        text: 'Capture'
-        pos_hint: {'center_x':0.5,'center_y':0.2}
-        # on_press: 
-        #     app.camie()
-
-<ImageScreen>:
-    name: 'image'
-    MDScreen:
-        md_bg_color:app.dark2
-    MDBoxLayout:
-        # size_hint_y:.25
-        orientation: "vertical"  
-        MDToolbar:
-            md_bg_color:app.dark2
-            title: "Image"
-            type_height: "small"
-            left_action_items: [["arrow-left", lambda x : app.swtchScreen('menu')]]
-            right_action_items: [["content-save", lambda x : app.save_img()],["refresh", lambda x: app.show_camie()]]
-        Image: 
-            id: cap_img
-            source: "images/flower.png"
-
-<ScannerScreen>:
-    name: 'scanner'
-    MDScreen:
-        md_bg_color:app.dark2
-    MDBoxLayout:
-        # size_hint_y:.25
-        padding:dp(15)
-        MDLabel:
-            text: 'Place QR Code here'
-            halign: 'center'
-            pos_hint: {"center_y": .9}
-
-    MDIconButton:
-        icon:'arrow-left'
-        pos_hint: {'center_x':0.1,'center_y':0.95}
-        on_press: 
-            root.manager.current = 'menu'
-            root.manager.transition.direction = "right"
-    MDBoxLayout:
-        # size_hint_y:.25
-        padding:dp(15)
-    ZBarCam:
-        id: zbarcam_id
-        # AndroidCamera:
-        #     index: 0
-        #     id: a_cam
-        #     resolution: self.camera_resolution
-        #     allow_stretch: True
-        #     play: True
-        #     canvas.before:
-        #         PushMatrix
-        #         Rotate:
-        #             angle: -90
-        #             origin: self.center
-        #         Scale:
-        #             x: self.cam_ratio
-        #             y: self.cam_ratio
-        #             origin: self.center
-        #     canvas.after:
-        #         PopMatrix
-        # KivyCamera:
-            # id: cam
-            # index: 0
-            # resolution: (100, 100)
-            # size_hint: 1,1
-            # play: True
-            # pos_hint: {"x":0,"top":1} 
-            # on_parent:
-            #     print('sfadtysf')
-<QRScreen>:
-    name: 'qr'
-    MDScreen:
-        md_bg_color:app.dark2
-
-    MDIconButton:
-        icon:'arrow-left'
-        pos_hint: {'center_x':0.1,'center_y':0.95}
-        on_press: 
-            root.manager.current = 'menu'
-            root.manager.transition.direction = "right"
-
-
-
-    MDLabel:
-        pos_hint: {'center_y':0.5}
-        halign: 'center'
-        text: 'No Document Available'
-        id: data
-        theme_text_color: "Custom"
-        text_color: 0, 1, 0, 1        
-
-
-    MDRaisedButton:
-        id: link
-        text: 'Go to link'
-        pos_hint: {'center_x':0.5,'center_y':0.2}        
-    MDRaisedButton:
-        # id: link
-        text: 'Go to document'
-        pos_hint: {'center_x':0.5,'center_y':0.4}  
+        icon: 'trash-can'
         on_press:
-            app.open_scanned_document()
+            app.remove_item(root,root.text)
 
-<SettingsScreen>:
-    name: 'settings'
-    MDScreen:
-        md_bg_color:app.dark2
-    MDLabel:
-        text: 'Settings'
-        halign: 'center'
-
-    MDIconButton:
-        icon:'arrow-left'
-        pos_hint: {'center_x':0.1,'center_y':0.95}
-        on_press: 
-            root.manager.current = 'menu'
-            root.manager.transition.direction = "right"
-
-<HelpScreen>:
-    name: 'help'
-    MDLabel:
-        text: 'Help'
-        halign: 'center'
-        valign: 'top'
-
-    MDIconButton:
-        icon:'arrow-left'
-        pos_hint: {'center_x':0.1,'center_y':0.95}
-        on_press: 
-            root.manager.current = 'menu'
-            root.manager.transition.direction = "right"
-
-<GeneratorScreen>:
-    name: 'generator'
-    MDLabel:
-        text: 'Generator'
-        halign: 'center'
-
-    MDIconButton:
-        icon:'arrow-left'
-        pos_hint: {'center_x':0.1,'center_y':0.95}
-        on_press: 
-            root.manager.current = 'menu'
-            root.manager.transition.direction = "right"
-
-<SingleDocScreen>:
-    name: 'singledoc'
-    MDScreen:
-        md_bg_color:app.dark2
-    MDBoxLayout:
-        orientation: "vertical"
-        MDToolbar:
-            md_bg_color:app.dark2
-            id: species
-            title: "Example Tabs"
-            type_height: "small"
-            left_action_items: [["arrow-left", lambda x : app.swtchScreen('collections')]]
-            right_action_items: [["delete", lambda x : app.delete_dialog()], ["dots-vertical", lambda x : app.swtchScreen('collections')]]
-
-        MDTabs:
-            id: tabs
-            background_color: rgba(0,0,0,0)
-            tab_hint_x: True
-            # on_tab_switch: app.on_tab_switch(*args)
-            Tab:
-                title: "Passport Data"
-                MDFloatLayout:
-                    # orientation: "vertical"
-                    MDRoundFlatButton:
-                        id: imag
-                        pos_hint: {"center_x": 0.7, "center_y": 0.95}
-                    MDRoundFlatButton:
-                        id: file
-                        pos_hint: {"center_x": 0.7, "center_y": 0.85}
-                MDBoxLayout:
-                    orientation: "vertical"
-                    # # size_hint_y:.5
-                    padding:dp(15)
-                    AsyncImage:
-                        id: img_url
-                        size_hint_y: None
-                        source: 'http://kivy.org/slides/kivypictures-thumb.jpg'
-                        width: 100
-                        height:  100
-                        allow_stretch: True
-                        pos_hint: {"center_x": 0.3, "center_y": 0.9}
-                    MDBoxLayout:
-                        orientation: "vertical"
-                        padding:dp(5)
-                        ScrollView:
-                            MDList:
-                                id:datas
-                                
-            Tab:
-                title: "Morphology"
-                MDBoxLayout:
-                    orientation: "vertical"
-                    MDLabel:
-                        id: header
-                        text: " "
-                        halign: "center"
-                    MDBoxLayout:
-                        padding:dp(15)
-                        orientation: "vertical"
-                        ScrollView:
-                            MDList:
-                                id:dataso
-            Tab:
-                title: "QR Code"
-                MDBoxLayout:
-                    orientation: "vertical"
-                    padding:dp(30)
-                    AsyncImage:
-                        id: qr_url
-                        size_hint_y: None
-                        # source: 'http://kivy.org/slides/kivypictures-thumb.jpg'
-                        width: 100
-                        height: dp(300)
-                        allow_stretch: True
-                        pos_hint: {"center_x": 0.5, "center_y": 0.95}
-                    MDBoxLayout:
-                        padding:dp(30)
-                        orientation: "vertical"
-                        MDRaisedButton:
-                            id: qr
-                            text: "Save QR Code"
-                            pos_hint: {"center_x": 0.5, "center_y": 0.6}
-
-
-<UploadDocScreen>
-    name: 'uploaddoc'
-
-    MDScreen:
-        md_bg_color:app.dark2
-    MDBoxLayout:
-        orientation: "vertical"
-        MDToolbar:
-            md_bg_color:app.dark2
-            title: "Upload Data"
-            type_height: "small"
-            left_action_items: [["arrow-left", lambda x : app.swtchScreen('collections')]]
-            right_action_items: [["eraser", lambda x : root.eraser()]]
+<ThreeLineIcon>:
+    text: root.text
+    on_press: app.passValue(self.text)         
+    IconLeftWidget:
+        icon: 'assets/images/hoya2.png'
+        # on_press:
+        #     print("dsfdfsdasdfasdgasgasfasfsadgadsfasd")
+    IconRightWidget:
+        icon: 'dots-vertical'
+        on_press:
+            app.show_simple_dialog()
             
-        MDTabs:
-            id: tabs
-            background_color: rgba(0,0,0,0)
-            tab_hint_x: True
-            Tab:
-                title: "Passport Data"
-                MDTextField:
-                    id: input_1
-                    hint_text: "Name"
-                    pos_hint: {"center_x": 0.5, "center_y": 0.95}
-                    size_hint: .75,0.08
-                    color_mode: 'accent'
-                    mode: "rectangle"
-                MDTextField:
-                    id: input_2
-                    hint_text: "Date Acquired"
-                    pos_hint: {"center_x": 0.5, "center_y": 0.85}
-                    size_hint: .75,0.08
-                    mode: "rectangle"
-                    color_mode: 'accent'
 
-                MDTextField:
-                    id: input_3
-                    hint_text: "Accession Origin"
-                    pos_hint: {"center_x": 0.5, "center_y": 0.75}
-                    size_hint: .75,0.08
-                    mode: "rectangle"
-                    color_mode: 'accent'
-
-                MDTextField:
-                    id: input_4
-                    hint_text: "Project"
-                    pos_hint: {"center_x": 0.5, "center_y": 0.65}
-                    size_hint: .75,0.08
-                    mode: "rectangle"
-                    color_mode: 'accent'
-
-                MDTextField:
-                    id: input_5
-                    hint_text: "Project Leader"
-                    pos_hint: {"center_x": 0.5, "center_y": 0.55}
-                    size_hint: .75,0.08
-                    mode: "rectangle"
-                    color_mode: 'accent'
-
-                MDTextField:
-                    id: input_6
-                    hint_text: "Other Details"
-                    pos_hint: {"center_x": 0.5, "center_y": 0.39}
-                    size_hint: .75,0.20
-                    mode: "rectangle"
-                    multiline: True
-                    color_mode: 'accent'
-
-                MDTextField:
-                    id: input_11
-                    hint_text: "Upload Image"
-                    pos_hint: {"center_x": 0.37, "center_y": 0.24}
-                    size_hint: .50,0.08
-                    mode: "rectangle"
-                    color_mode: 'accent'
-
-                MDTextField:
-                    id: input_12
-                    hint_text: "Upload File"
-                    pos_hint: {"center_x": 0.37, "center_y": 0.14}
-                    size_hint: .50,0.08
-                    mode: "rectangle"
-                    color_mode: 'accent'
-
-                MDRaisedButton:
-                    text: "Browse"
-                    pos_hint: {"center_x": 0.8, "center_y": 0.233}
-                    size_hint: .22,0.065
-                    on_press: 
-                        app.change_type(0)
-                        root.manager.current = 'fileman'
-                        root.manager.transition.direction = "left"
-                        # app.add_img()
-
-                MDRaisedButton:
-                    text: "Browse"
-                    pos_hint: {"center_x": 0.8, "center_y": 0.133}
-                    size_hint: .22,0.065
-                    on_press:
-                        app.change_type(1)
-                        root.manager.current = 'fileman'
-                        root.manager.transition.direction = "left"
-                        
-
-            Tab:
-                title: "Morphology"
-                MDTextField:
-                    id: input_7
-                    hint_text: "Pollinium"
-                    pos_hint: {"center_x": 0.5, "center_y": 0.95}
-                    size_hint: .75,0.08
-                    mode: "rectangle"
-                    color_mode: 'accent'
-
-                MDTextField:
-                    id: input_8
-                    hint_text: "Retinaculum"
-                    pos_hint: {"center_x": 0.5, "center_y": 0.85}
-                    size_hint: .75,0.08
-                    mode: "rectangle"
-                    color_mode: 'accent'
-
-                MDTextField:
-                    id: input_9
-                    hint_text: "Translator"
-                    pos_hint: {"center_x": 0.5, "center_y": 0.75}
-                    size_hint: .75,0.08
-                    mode: "rectangle"
-                    color_mode: 'accent'
-
-                MDTextField:
-                    id: input_10
-                    hint_text: "Caudicle Bulb Diameter"
-                    pos_hint: {"center_x": 0.5, "center_y": 0.65}
-                    size_hint: .75,0.08
-                    mode: "rectangle"
-                    color_mode: 'accent'
-
-                MDRaisedButton:
-                    pos_hint: {'center_x':0.5, 'center_y':0.1}
-                    text: 'Save'
-                    on_press: 
-                        app.spin_dialog()
-                        app.upload_thread()
-
-<FileManagerScreen>:
-    name: 'fileman'
-    MDBoxLayout:
-        orientation: 'vertical'
-
-        MDToolbar:
-            title: "MDFileManager"
-            left_action_items: [["arrow-left", lambda x : app.swtchScreen('uploaddoc')]]
-            elevation: 10
-
-        MDFloatLayout:
-
-            MDRoundFlatIconButton:
-                text: "Open manager"
-                icon: "folder"
-                pos_hint: {'center_x': .5, 'center_y': .6}
-                on_release: root.file_manager_open()
-
-                        
 <Content>:
     orientation: "vertical"
     spacing: "12dp"
@@ -693,10 +58,148 @@ ScreenManager:
     spacing: "12dp"
     size_hint_y: None
     height: "50dp"
-
+    # MDLabel:
+    #     text:" Processing... "
+    #     pos_hint: {'center_x': .5, 'center_y': .7}
     MDSpinner:
         id: spinner
         size_hint: None, None
         size: dp(46), dp(86)
         pos_hint: {'center_x': .5, 'center_y': .7}
         # active: check.active
+        
+<ContentEdit>
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "120dp"
+
+    MDTextField:
+        id:title
+        hint_text: "Title"
+
+    MDTextField:
+        id:desc
+        hint_text: "Description"
+
+
+<Morph>
+    confirm_check_in_list: confirm_check_in_list
+    id: confirm_check_in_dialog
+
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "450dp"
+
+    ScrollView:
+        MDList:
+            id: confirm_check_in_list
+
+# <Ttest>
+#     confirm_check_in_list: confirm_check_in_list
+#     id: confirm_check_in_dialog
+
+#     orientation: "vertical"
+#     spacing: "1dp"
+#     size_hint_y: None
+#     height: "450dp"
+
+#     AnchorLayout:
+#         id: confirm_check_in_list
+
+    # ScrollView:
+    #     MDList:
+    #         id: confirm_check_in_list
+<Sample>
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "450dp"
+
+    ScrollView:
+        size_hint_y:0.75
+        pos_hint: {"center_x": .5, "center_y": .17}
+        MDBoxLayout:
+            orientation:'vertical'
+            size_hint_y:1.7
+            spacing:dp(40)
+            FloatLayout:
+                size_hint: 1,2.2
+                pos_hint: {'top':0.99}
+
+                MDTextField:
+                    id: input_19
+                    hint_text: "Sample name/no."
+                    pos_hint: {'center_x': .5, 'center_y': .96,}
+                    required: True
+                    helper_text_mode: "on_error"
+                    
+                MDTextField:
+                    id: input_7
+                    hint_text: "Caudicle Bulb"
+                    pos_hint: {'center_x': .5, 'center_y': .89,}
+                MDTextField:
+                    id: input_8
+                    hint_text: "Extension"
+                    pos_hint: {'center_x': .5, 'center_y': .82,}
+
+                MDTextField:
+                    id: input_9
+                    hint_text: "Hips"
+                    pos_hint: {'center_x': .5, 'center_y': .75,}
+                MDTextField:
+                    id: input_10
+                    hint_text: "Pollinium Length"
+                    pos_hint: {'center_x': .5, 'center_y': .68,}
+
+                MDTextField:
+                    id: input_13
+                    hint_text: "Pollinium Widest"                    
+                    pos_hint: {'center_x': .5, 'center_y': .61,}
+
+                MDTextField:
+                    id: input_14
+                    hint_text: "Retinaculum Length"                    
+                    pos_hint: {'center_x': .5, 'center_y': .54,}
+
+                MDTextField:
+                    id: input_15
+                    hint_text: "Shoulder"                    
+                    pos_hint: {'center_x': .5, 'center_y': .47,}
+
+                MDTextField:
+                    id: input_16
+                    hint_text: "Translator Arm Length"                    
+                    pos_hint: {'center_x': .5, 'center_y': .40,}
+
+
+                MDTextField:
+                    id: input_17
+                    hint_text: "Translator Depth"                    
+                    pos_hint: {'center_x': .5, 'center_y': .33,}
+
+                MDTextField:
+                    id: input_18
+                    hint_text: "Waist"                    
+                    pos_hint: {'center_x': .5, 'center_y': .26,}
+
+<SwipeToDeleteItem>:
+    size_hint_y: None
+    height: content.height
+
+    MDCardSwipeLayerBox:
+        padding: "8dp"
+
+        MDIconButton:
+            icon: "trash-can"
+            pos_hint: {"center_y": .5}
+            on_release: app.remove_item(root)
+
+    MDCardSwipeFrontBox:
+
+        OneLineListItem:
+            id: content
+            text: root.text
+            _no_ripple_effect: True
+            on_press: app.show_morph(app.morph,self.text)

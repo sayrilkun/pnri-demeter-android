@@ -1,0 +1,84 @@
+<CollectionsScreen>:
+    name: 'collections'
+    MDScreen:
+        md_bg_color:app.dark2
+        MDLabel:
+            id: page_number
+            text:""
+            font_style:"H6"
+            halign: "center"
+            pos_hint: {'center_x':0.5,'center_y':0.95}
+        MDLabel:
+            id: page_numberad
+            text:"adfa"
+            font_style:"Subtitle2"
+            halign: "center"
+            pos_hint: {'center_x':0.5,'center_y':0.92}
+        MDIconButton:
+            icon:'page-first'
+            pos_hint: {'center_x':0.3,'center_y':0.95}
+            on_press: 
+                app.prev_button()
+        MDIconButton:
+            icon:'page-last'
+            pos_hint: {'center_x':0.7,'center_y':0.95}
+            on_press: 
+                app.next_button()
+        MDIconButton:
+            icon:'arrow-left'
+            pos_hint: {'center_x':0.06,'center_y':0.95}
+            on_press: 
+                root.manager.current = 'menu'
+                root.manager.transition.direction = "right"
+        
+        MDIconButton:
+            icon:'refresh'
+            pos_hint: {'center_x':0.94,'center_y':0.95}
+            on_press: 
+                app.refresh_callback()
+
+    MDBoxLayout:
+        orientation:'vertical'
+
+        MDBoxLayout:
+            size_hint_y:.25
+            padding:dp(15)
+            MDBoxLayout:
+                padding:dp(15)
+                orientation:"vertical"
+
+                MDTextFieldRound:
+                    id:search
+                    hint_text: 'Press enter to search'
+                    on_text_validate: app.search_callback()
+                    icon_right: 'close'
+                    # on_press:
+                    #     print("dsfsdf")
+        MDBoxLayout:
+            # size_hint_y:.25
+            padding:dp(15)
+            ScrollView:
+                MDGridLayout:
+                    id: box
+                    adaptive_height: True
+                    cols: 1
+                # id: refresh_layout
+                # refresh_callback: app.refresh_callback
+                # root_layout: root
+
+                # MDList:
+                #     id: box
+                #     # on_parent: app.set_list()
+
+
+
+    MDFloatingActionButton:
+        icon: "plus"
+        md_bg_color: app.theme_cls.primary_color
+        pos_hint: {"center_x": .85, "center_y": .1}
+        on_press: 
+            root.manager.current = 'uploaddoc'
+            root.manager.transition.direction = "left"
+            app.clear_morph()
+            app.change_state(1)
+            app.eraser()

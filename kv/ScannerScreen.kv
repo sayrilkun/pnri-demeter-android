@@ -1,0 +1,42 @@
+<ScannerScreen>:
+    name: 'scanner'
+    MDScreen:
+        md_bg_color:app.dark2
+    MDBoxLayout:
+        # size_hint_y:.25
+        padding:dp(15)
+        MDLabel:
+            text: 'Place QR Code here'
+            halign: 'center'
+            pos_hint: {"center_y": .95}
+
+    MDIconButton:
+        icon:'arrow-left'
+        pos_hint: {'center_x':0.1,'center_y':0.95}
+        on_press: 
+            root.manager.current = 'menu'
+            root.manager.transition.direction = "right"
+
+    MDLabel:
+        pos_hint: {'center_y':0.10}
+        halign: 'center'
+        text: ''
+        id: forem
+        theme_text_color: "Custom"
+        # text_color: 0, 1, 0, 1        
+        font_style :'H6' 
+
+    # MDRaisedButton:
+    #     id: link
+    #     text: 'Go to link'
+    #     pos_hint: {'center_x':0.5,'center_y':0.2}        
+    MDRaisedButton:
+        # id: link
+        text: 'Go to document'
+        pos_hint: {'center_x':0.5,'center_y':0.05}  
+        on_press:
+            # app.spin_dialog()
+            app.oks_qr()
+            
+    # ZBarCam:
+    #     id: zbarcam_id

@@ -1,0 +1,115 @@
+<MenuScreen>:
+    name: 'menu'
+    MDScreen:
+        md_bg_color: app.dark2
+        on_enter:
+            print('sfadseryeryetf')
+    MDBoxLayout:
+        orientation:'vertical'
+        MDBoxLayout:
+            size_hint_y:.25            
+            MDBoxLayout:
+                Image:
+                    source: 'assets/images/logo.jpg'
+                    size_hint_y: None
+                    width: 250
+                    height: 250
+                    allow_stretch: True
+
+
+        MDGridLayout:
+            size_hint_y:.75
+            cols:2
+            padding:[dp(15),dp(15),dp(15),dp(35)]
+            spacing:dp(15)
+            
+            ElementCard:
+                image:"assets/images/cams-1.png"
+                text:"Camera"
+                subtext:"Morphometric Analysis"
+                items_count: ""
+                on_press: 
+                    app.not_avail()
+                    # root.manager.current = 'camera'
+                    # root.manager.transition.direction = "left"
+                    # app.show_camie()
+
+            ElementCard:
+                image:"assets/images/hoya3.png"
+                text:"Collections"
+                subtext:"Monitor Database"
+                items_count:""
+                on_press: 
+                    # app.refresh_callback()
+                    root.manager.current = 'collections'
+                    root.manager.transition.direction = "left"
+
+            ElementCard:
+                image:"assets/images/scanner.png"
+                text:"QR Code Scanner"
+                subtext:""
+                items_count:""
+                on_press: 
+                    root.manager.current = 'scanner'
+                    root.manager.transition.direction = "left"
+                    # app.show_camscanner()
+
+            ElementCard:
+                image: "assets/images/iden.png"
+                text:"Species Identifier"
+                items_count:""
+                subtext:""
+                on_press: 
+                    app.not_avail()
+                    # root.manager.current = 'iden'
+                    # root.manager.transition.direction = "left"
+                    
+            ElementCard:
+                image:"assets/images/help.png"
+                text:"Help"
+                subtext:"How to use the App"
+                items_count:""
+                on_press: 
+                    root.manager.current = 'help'
+                    root.manager.transition.direction = "left" 
+
+
+            ElementCard:
+                image:"assets/images/setting.png"
+                text:"Settings"
+                subtext:""
+                items_count:""
+                on_press: 
+                    if app.access == "admin": \
+                    root.manager.current = 'settings'
+                    root.manager.transition.direction = "left"
+                    if app.access == "user": \
+                    app.admin_toast()
+                    
+<ElementCard@MDCard>:
+    md_bg_color:app.dark1
+    padding:dp(15)
+    spacing:dp(15)
+    radius:dp(25)
+    ripple_behavior: True
+    image:''
+    text:""
+    items_count:""
+    subtext:''
+
+    orientation:'vertical'
+    Image:
+        source:root.image
+    MDBoxLayout:
+        orientation:'vertical'
+        MDLabel:
+            halign:"center"
+            text:root.text
+            font_style:"H6"
+        MDLabel:
+            halign:"center"
+            font_style:"Caption"
+            text:root.subtext
+        MDLabel:
+            halign:"center"
+            text:root.items_count   
